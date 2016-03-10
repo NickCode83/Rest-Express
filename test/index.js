@@ -37,5 +37,57 @@ describe('express rest api serve', function(){
             });
     });
 
+    //检索整个集合
+    it('retrieves a collection',function(done){
+        superagent.get('http://localhost:3000/collections/test')
+            .end(function(e,res){
+                console.log(res.body);
+                expect(e).to.eql(null);
+                expect(res.body.length).to.be.above(0);
+                expect(res.body.map(function(item){
+                    return item._id;
+                }).to.contain(id)); //contain()方法比原生的indexOf()更优雅
+                done();
+            });
+    });
+
+    //通过对象ID更新对象
+    it('updates an object', function(done){
+        superagent.put('http://localhost:3000/collections/test/' +id)
+            .send({
+                name:'Peter',
+                email:'peter@yahoo.com'
+            })
+            .end(function(e,res){
+                expect(e).to.eql(null);
+                expect(typeof res.body).to.eql('object');
+                expect(res.body.msg).to.eql('success');
+                done();
+            });
+    });
+
+    //通过对象ID检查对象是否更新
+    it('checks an updated object', function (done) {
+        superagent.get('http://localhost:3000/collections/test/' + id)
+            .end(function(e,res){
+                expect(e).to.eql(null);
+                expect(typeof res.body).to.eql('object');
+                expect(res.body._id.length).to.eql(24);
+                expect(res.body._id).to.eql(id);
+                expect(res.body.name).to.eql('Peter');
+                done();
+            });
+    });
+
+    //通过对象ID删除对象
+    it('removes an object', function(done){
+        superagent.del('http://localhost:3000/collections/test/' + id)
+            .end(function (e, res) {
+                expect(e).to.eql(null);
+                expect(typeof res.body).to.eql('object');
+                expect(res.body.msg).to.eql('success');
+                done();
+            });
+    });
 
 });

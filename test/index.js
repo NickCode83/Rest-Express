@@ -15,11 +15,11 @@ describe('express rest api serve', function(){
                 email:'john@rpjs.co'
             })
             .end(function(e,res){
-                console.log(res.body);
+                console.log(res.body.ops);
                 expect(e).to.eql(null);   //返回的错误对象为空
-                expect(res.body.length).to.eql(1);  //响应对象的数组应该含有且只含有一个元素
-                expect(res.body[0]._id.length).to.eql(24);  //第一个响应对象中应包含一个24字节长度的_id属性,他是一个标准的MongoDB对象ID类型.
-                id = res.body[0]._id;
+                expect(res.body.ops.length).to.eql(1);  //响应对象的数组应该含有且只含有一个元素
+                expect(res.body.ops[0]._id.length).to.eql(24);  //第一个响应对象中应包含一个24字节长度的_id属性,他是一个标准的MongoDB对象ID类型.
+                id = res.body.ops[0]._id;
                 done();  //在测试异步代码中,不要漏掉这里的done()函数,否则Mocha的测试程序会在收到服务器响应之前结束.
             });
     });
@@ -46,7 +46,7 @@ describe('express rest api serve', function(){
                 expect(res.body.length).to.be.above(0);
                 expect(res.body.map(function(item){
                     return item._id;
-                }).to.contain(id)); //contain()方法比原生的indexOf()更优雅
+                })).to.contain(id); //contain()方法比原生的indexOf()更优雅
                 done();
             });
     });
@@ -59,6 +59,7 @@ describe('express rest api serve', function(){
                 email:'peter@yahoo.com'
             })
             .end(function(e,res){
+                console.log(res.body);
                 expect(e).to.eql(null);
                 expect(typeof res.body).to.eql('object');
                 expect(res.body.msg).to.eql('success');
@@ -70,6 +71,7 @@ describe('express rest api serve', function(){
     it('checks an updated object', function (done) {
         superagent.get('http://localhost:3000/collections/test/' + id)
             .end(function(e,res){
+                console.log(res.body);
                 expect(e).to.eql(null);
                 expect(typeof res.body).to.eql('object');
                 expect(res.body._id.length).to.eql(24);
@@ -83,6 +85,7 @@ describe('express rest api serve', function(){
     it('removes an object', function(done){
         superagent.del('http://localhost:3000/collections/test/' + id)
             .end(function (e, res) {
+                console.log(res.body);
                 expect(e).to.eql(null);
                 expect(typeof res.body).to.eql('object');
                 expect(res.body.msg).to.eql('success');
